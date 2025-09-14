@@ -93,4 +93,5 @@ function getMajorCodeByLabel(label) {
   return null;
 }
 
+export { faculties };
 export default getMajorCodeByLabel;
