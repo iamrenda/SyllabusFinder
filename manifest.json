@@ -7,6 +7,12 @@
   "background": {
     "service_worker": "background.js"
   },
+  "action": {
+    "default_popup": "index.html",
+    "default_icon": {
+      "128": "./icon.png"
+    }
+  },
   "content_scripts": [
     {
       "matches": ["https://cp.aim.aoyama.ac.jp/*"],
