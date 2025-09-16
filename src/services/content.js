@@ -1,5 +1,6 @@
 import buildSyllabusSearchUrl from "./buildSyllabusSearchUrl.js";
-import buildSyllabusUrl from "./buildSyllabusUrl.js";
+import fetchSyllabusSearchDoc from "./fetchSyllabusSearchDoc.js";
+// import showSyllabusResults from "./showSyllabusResults.js";
 
 function createButton() {
   const button = document.createElement("button");
@@ -25,6 +26,16 @@ async function getMajor() {
   });
 }
 
+async function searchSyllabus(searchData) {
+  const syllabusSearchURL = await buildSyllabusSearchUrl(searchData);
+  console.log("Searching:", syllabusSearchURL);
+
+  const syllabusSearchDoc = await fetchSyllabusSearchDoc(syllabusSearchURL);
+  const syllabusSearchResults = [...syllabusSearchDoc.querySelectorAll("#CPH1_gvw_kensaku tbody tr")];
+
+  return { syllabusSearchDoc, syllabusSearchResults };
+}
+
 async function handleButtonClick(e, { courseCard, dayLabel }) {
   e.preventDefault();
 
@@ -37,7 +48,7 @@ async function handleButtonClick(e, { courseCard, dayLabel }) {
   const lecturerRaw = courseCard.querySelector(".courseCardUser");
   const lecturer = [...lecturerRaw.childNodes][0].textContent || "";
 
-  const data = {
+  let data = {
     lectureName,
     lecturer: lecturer.replace(/["ほか"]/g, "").trim(),
     day: dayLabel,
@@ -46,29 +57,49 @@ async function handleButtonClick(e, { courseCard, dayLabel }) {
     term: term || "",
   };
 
-  let syllabusSearchURL = await buildSyllabusSearchUrl(data);
-  console.log(syllabusSearchURL);
-
   try {
-    const link = await buildSyllabusUrl(syllabusSearchURL);
-    if (link) {
-      window.location.href = link;
-      return;
+    // First attempt: with lecturer
+    let { syllabusSearchDoc, syllabusSearchResults } = await searchSyllabus(data);
+
+    // Retry if nothing found (remove lecturer)
+    if (syllabusSearchResults.length === 0) {
+      console.warn("No syllabus found with lecturer. Retrying without lecturer...");
+      data = { ...data, lecturer: "" };
+      ({ syllabusSearchDoc, syllabusSearchResults } = await searchSyllabus(data));
     }
 
-    const retryData = { ...data, lecturer: "" };
-    syllabusSearchURL = await buildSyllabusSearchUrl(retryData);
-
-    const retryLink = await buildSyllabusUrl(syllabusSearchURL);
-    if (retryLink) {
-      window.location.href = retryLink;
-      return;
+    // Still nothing found
+    if (syllabusSearchResults.length === 0) {
+      return alert("No syllabus found :(");
     }
 
-    // If still not found
-    alert("No syllabus found :(");
+    // 1 syllabus search result
+    if (syllabusSearchResults.length === 1) {
+      const linkElement = syllabusSearchDoc.getElementById("CPH1_gvw_kensaku_lnkShousai_0");
+      const link = `https://syllabus.aoyama.ac.jp/${linkElement.getAttribute("href")}`;
+
+      return (window.location.href = link);
+    }
+
+    // 2+ syllabus search results
+    const syllabusResults = syllabusSearchResults.map((searchResult) => ({
+      period: searchResult.querySelector(".col2")?.textContent.trim() || "",
+      subject: searchResult.querySelector(".col3")?.textContent.trim() || "",
+      teacher: searchResult.querySelector(".col4")?.textContent.trim() || "",
+      credits: searchResult.querySelector(".col6")?.textContent.trim() || "",
+      faculty: searchResult.querySelector(".col7")?.textContent.trim() || "",
+      syllabusID: searchResult.querySelector(".col8 a")?.getAttribute("href") || "",
+    }));
+
+    alert("More than one syllabus found. Bringing you to the first syllabus found. Please check details.");
+    const link = `https://syllabus.aoyama.ac.jp/${syllabusResults[0].syllabusID}`;
+    window.location.href = link;
+
+    // Or if you want the popup:
+    // showSyllabusResults(syllabusResults);
   } catch (err) {
-    alert("Error fetching syllabus:", err);
+    alert("Error fetching syllabus. Please try again later.");
+    console.error(err);
   }
 }
 

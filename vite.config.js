@@ -18,8 +18,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         popup: resolve(__dirname, "index.html"), // popup React page
-        content: resolve(__dirname, "src/services/content.js"), // content script
         background: resolve(__dirname, "src/services/background.js"), // background service worker
+        content: resolve(__dirname, "src/services/content.js"), // content script
       },
       output: {
         entryFileNames: (chunk) => {
