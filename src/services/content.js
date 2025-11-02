@@ -55,6 +55,7 @@ async function handleButtonClick(e, { courseCard, dayLabel }) {
     period: period || "",
     major: major,
     term: term || "",
+    isOnline: period === "オンライン",
   };
 
   try {

@@ -5,23 +5,14 @@ function findDayIndex(dayInJapanese) {
   return days.indexOf(dayInJapanese) + 1; // 1 based
 }
 
-async function buildSyllabusSearchUrl({
-  lectureName,
-  lecturer,
-  day,
-  period,
-  major,
-  term,
-  inPerson = false,
-  online = false,
-}) {
+async function buildSyllabusSearchUrl({ lectureName, lecturer, day, period, major, term, isOnline = false }) {
   const params = new URLSearchParams({
     __EVENTTARGET: "",
     __EVENTARGUMENT: "",
     __VIEWSTATEGENERATOR: "309A73F1",
-    YR: "2025",
-    BU: "BU1",
-    KW: "",
+    YR: "2025", // Academic Year
+    BU: "BU1", // School
+    KW: "", // Keywords
     KM: lectureName || "",
     KI: lecturer || "",
     GKB: "",
@@ -54,8 +45,11 @@ async function buildSyllabusSearchUrl({
   }
 
   // In-person / Online
-  if (inPerson) params.set("IP", "on");
-  if (online) params.set("OL", "on");
+  if (isOnline) {
+    params.set("OL", "on");
+  } else {
+    params.set("IP", "on");
+  }
 
   return `https://syllabus.aoyama.ac.jp/?${params.toString()}`;
 }
