@@ -1,9 +1,8 @@
-import "../styles/index.css";
-import faculties from "../../public/faculties.json";
-import FacultyElement from "./features/FacultyElement";
-import useChromeStorageState from "./features/useChromeStorageState";
+import faculties from "../../../../public/faculties.json";
+import FacultyElement from "./FacultyElement";
+import useChromeStorageState from "./useChromeStorageState";
 
-function App() {
+function Majors() {
   const [selectedMajor, setSelectedMajor] = useChromeStorageState("major", null);
 
   return (
@@ -30,4 +29,4 @@ function App() {
   );
 }
 
-export default App;
+export default Majors;

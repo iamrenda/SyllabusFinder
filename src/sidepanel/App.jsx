@@ -1,38 +1,35 @@
-import { useState, useEffect } from "react";
-import SyllabusList from "./features/SyllabusList.jsx";
-import SearchFilter from "./features/SearchFilter.jsx";
+import "../styles/index.css";
+import { useState } from "react";
+import Classes from "./tabs/classes/classes";
+import Majors from "./tabs/majors/Majors";
 
 function App() {
-  const [data, setData] = useState([]);
-
-  useEffect(() => {
-    const handleMessage = (message) => {
-      if (message.type === "UPDATE_CLASSES") {
-        setData(message.payload);
-      }
-    };
-
-    chrome.runtime.onMessage.addListener(handleMessage);
-
-    return () => {
-      chrome.runtime.onMessage.removeListener(handleMessage);
-    };
-  }, []);
-
-  if (data?.syllabusResults?.length === 0) {
-    return <h1>該当する授業が見つかりませんでした</h1>;
-  }
+  const [activeTab, setActiveTab] = useState("classes");
 
   return (
-    <div>
-      <h1>検索結果が複数見つかりました</h1>
-      <div>
-        <h3>検索フィルター:</h3>
-        <SearchFilter searchFilter={data?.searchFilters} />
+    <div className="w-[380px] h-screen bg-white flex flex-col">
+      <div className="flex border-b border-gray-300">
+        <button
+          onClick={() => setActiveTab("classes")}
+          className={`flex-1 py-2 font-medium ${
+            activeTab === "classes" ? "border-b-2 border-blue-500" : ""
+          } hover:cursor-pointer`}
+        >
+          クラス
+        </button>
+        <button
+          onClick={() => setActiveTab("majors")}
+          className={`flex-1 py-2 font-medium ${
+            activeTab === "majors" ? "border-b-2 border-blue-500" : ""
+          } hover:cursor-pointer`}
+        >
+          学部・学科
+        </button>
       </div>
-      <div>
-        <h2>見つかった授業 ({data?.syllabusResults?.length || 0}件):</h2>
-        <SyllabusList syllabusResults={data?.syllabusResults} />
+
+      <div className="flex-1 overflow-y-auto p-3">
+        {activeTab === "classes" && <Classes />}
+        {activeTab === "majors" && <Majors />}
       </div>
     </div>
   );

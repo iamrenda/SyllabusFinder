@@ -8,7 +8,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "src/popup/index.html",
+    "default_title": "Click to open panel",
     "default_icon": {
       "128": "./icon.png"
     }
