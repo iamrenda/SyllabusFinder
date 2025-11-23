@@ -2,7 +2,7 @@ import "../styles/index.css";
 import { useEffect, useState } from "react";
 import Classes from "./tabs/classes/classes/Classes";
 import Majors from "./tabs/majors/Majors";
-import Settings from "./tabs/settings/Settings";
+import About from "./tabs/about/About";
 import Nav from "./components/Nav";
 import LoadingScreen from "./components/Loading";
 import storeClasses from "../scripts/storeClasses";
@@ -91,7 +91,7 @@ function App() {
 
             <div className="flex-1 overflow-y-auto p-3">
                 {activeTab === "classes" && <Classes classes={classes} />}
-                {activeTab === "settings" && <Settings />}
+                {activeTab === "about" && <About />}
             </div>
         </div>
     );
