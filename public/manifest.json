@@ -1,32 +1,32 @@
 {
-  "manifest_version": 3,
-  "name": "Syllabus Finder",
-  "version": "1.0",
-  "description": "Syllabus finder for Aoyama Gakuin Students",
-  "permissions": ["storage", "scripting", "activeTab", "sidePanel"],
-  "background": {
-    "service_worker": "background.js"
-  },
-  "action": {
-    "default_title": "Click to open panel",
-    "default_icon": {
-      "128": "./icon.png"
-    }
-  },
-  "side_panel": {
-    "default_path": "src/sidepanel/index.html"
-  },
-  "content_scripts": [
-    {
-      "matches": ["https://cp.aim.aoyama.ac.jp/*"],
-      "js": ["content.js"]
-    }
-  ],
-  "host_permissions": ["https://syllabus.aoyama.ac.jp/*", "https://cp.aim.aoyama.ac.jp/*"],
-  "web_accessible_resources": [
-    {
-      "matches": ["https://syllabus.aoyama.ac.jp/*", "https://cp.aim.aoyama.ac.jp/*"],
-      "resources": ["faculties.json"]
-    }
-  ]
+    "manifest_version": 3,
+    "name": "Syllabus Finder",
+    "version": "1.0",
+    "description": "Syllabus finder for Aoyama Gakuin Students",
+    "permissions": ["storage", "scripting", "activeTab", "sidePanel", "tabs"],
+    "background": {
+        "service_worker": "background.js"
+    },
+    "action": {
+        "default_title": "Click to open panel",
+        "default_icon": {
+            "128": "./icon.png"
+        }
+    },
+    "side_panel": {
+        "default_path": "src/sidepanel/index.html"
+    },
+    "content_scripts": [
+        {
+            "matches": ["https://cp.aim.aoyama.ac.jp/*"],
+            "js": ["content.js"]
+        }
+    ],
+    "host_permissions": ["https://syllabus.aoyama.ac.jp/*", "https://cp.aim.aoyama.ac.jp/*"],
+    "web_accessible_resources": [
+        {
+            "matches": ["https://syllabus.aoyama.ac.jp/*", "https://cp.aim.aoyama.ac.jp/*"],
+            "resources": ["faculties.json"]
+        }
+    ]
 }

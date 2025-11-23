@@ -1,17 +1,16 @@
 import { useState } from "react";
 import ClassList from "./ClassList.jsx";
 import CollectedSyllabuses from "../collectedSyllabuses/CollectedSyllabuses.jsx";
-import Button from "../../../components/Button.jsx";
 
 function Classes({ classes }) {
   const [selectedClass, setSelectedClass] = useState({});
 
   if (!classes || Object.keys(classes).length === 0) {
-    return <h1>CoursePowerにアクセスしてください</h1>;
+    return <h1>CoursePowerの講義一覧にアクセスしてください</h1>;
   }
 
   if (Object.keys(selectedClass).length !== 0) {
-    return <CollectedSyllabuses selectedClass={selectedClass} />;
+    return <CollectedSyllabuses selectedClass={selectedClass} setSelectedClass={setSelectedClass} />;
   }
 
   return (

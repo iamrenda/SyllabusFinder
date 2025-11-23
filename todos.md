@@ -1,8 +1,6 @@
 features that i want to add in the future
 
 \***\*\*\*\*\*\*** Neccessary \***\*\*\*\*\*\***
-work on loading screen
-
 sort the classes by day
 
 design {

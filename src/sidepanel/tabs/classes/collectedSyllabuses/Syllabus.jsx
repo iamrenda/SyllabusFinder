@@ -3,19 +3,19 @@ import { FaChalkboardTeacher, FaSchool, FaRegCommentDots, FaUserCheck } from "re
 import { useState } from "react";
 import InfoField from "../../../components/InfoField";
 
-function Syllabus({ index, syllabus, selectedSyllabusIndex, setSelectedSyllabusIndex }) {
+function Syllabus({ syllabus, selectedSyllabusID, setSelectedSyllabusID }) {
   const { day, lectureName, lecturer, period, isOnline } = syllabus.classInfo;
   const { additionalInfo, campus, credits, grade, syllabusID, subject } = syllabus.syllabus;
 
   const [isHovered, setIsHovered] = useState(false);
-  const isSelected = index === selectedSyllabusIndex;
+  const isSelected = syllabusID === selectedSyllabusID;
 
   return (
     <div
-      className={`relative flex items-center gap-3 rounded-2xl py-3.5 px-1.5 shadow-sm h-44 hover:cursor-pointer outline-blue-600 transition-all duration-150 ${
-        !isHovered && "hover:outline-3"
-      } ${isSelected && "outline-3"}`}
-      onClick={() => setSelectedSyllabusIndex(index)}
+      className={`relative flex items-center gap-3 rounded-2xl py-3.5 px-1.5 shadow-sm h-44 hover:cursor-pointer outline outline-blue-600 transition-all duration-150 ${
+        !isHovered && "hover:outline-1.5"
+      } ${isSelected && "outline-1.5"}`}
+      onClick={() => setSelectedSyllabusID(syllabusID)}
     >
       <div className="flex flex-col items-center text-base w-12 flex-shrink-0 text-gray-500">
         <p>{isOnline ? "*" : period}</p>

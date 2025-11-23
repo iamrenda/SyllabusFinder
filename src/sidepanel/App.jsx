@@ -5,39 +5,96 @@ import Majors from "./tabs/majors/Majors";
 import Settings from "./tabs/settings/Settings";
 import Nav from "./components/Nav";
 import LoadingScreen from "./components/Loading";
+import storeClasses from "../scripts/storeClasses";
+import Error from "./components/Error";
+import requestScrapeFromPage from "../scripts/requestScrapeFromPage";
+
+async function reload(selectedMajor, setClasses, setIsLoading) {
+    setIsLoading(true);
+
+    try {
+        let { classInfo } = await chrome.storage.local.get("classInfo");
+
+        if (!classInfo || Object.keys(classInfo).length === 0) {
+            try {
+                const scrapedClassInfo = await requestScrapeFromPage();
+                await chrome.storage.local.set({ classInfo: scrapedClassInfo });
+
+                if (!scrapedClassInfo || Object.keys(scrapedClassInfo).length === 0) {
+                    alert("シラバス情報の取得に失敗しました。\nCoursePowerの講義一覧にアクセスしてください。");
+                    return;
+                }
+            } catch (scrapeErr) {
+                console.error("Scrape failed:", scrapeErr);
+                alert("シラバス情報の取得に失敗しました。\nCoursePowerの講義一覧にアクセスしてください。");
+                return;
+            }
+        }
+
+        await storeClasses(selectedMajor, setClasses);
+
+        alert("シラバスの再取得が完了しました！");
+    } catch (error) {
+        console.error(error);
+        alert("シラバスの再取得に失敗しました。");
+    } finally {
+        setIsLoading(false);
+    }
+}
 
 function App() {
-  const [isLoading, setIsLoading] = useState(false);
-  const [activeTab, setActiveTab] = useState("classes");
-  const [classes, setClasses] = useState({});
+    const [isLoading, setIsLoading] = useState(false);
+    const [activeTab, setActiveTab] = useState("classes");
+    const [classes, setClasses] = useState({});
+    const [selectedMajor, setSelectedMajor] = useState("");
 
-  useEffect(() => {
-    async function loadClasses() {
-      const res = await chrome.storage.local.get("classes");
-      setClasses(res.classes || {});
+    useEffect(() => {
+        async function loadClasses() {
+            const res = await chrome.storage.local.get("classes");
+            setClasses(res.classes || {});
+        }
+
+        loadClasses();
+    }, []);
+
+    useEffect(() => {
+        async function loadMajor() {
+            const res = await chrome.storage.local.get("selectedMajor");
+            setSelectedMajor(res.selectedMajor || "");
+        }
+
+        loadMajor();
+    }, []);
+
+    if (isLoading) {
+        return <LoadingScreen />;
     }
 
-    loadClasses();
-  }, []);
+    if (!selectedMajor) {
+        return (
+            <Majors
+                setIsLoading={setIsLoading}
+                setClasses={setClasses}
+                selectedMajor={selectedMajor}
+                setSelectedMajor={setSelectedMajor}
+            />
+        );
+    }
 
-  if (isLoading) {
-    return <LoadingScreen />;
-  }
+    if (!classes || Object.keys(classes).length === 0) {
+        return <Error handleClick={() => reload(selectedMajor, setClasses, setIsLoading)} />;
+    }
 
-  if (Object.keys(classes).length === 0) {
-    return <Majors setIsLoading={setIsLoading} setClasses={setClasses} />;
-  }
+    return (
+        <div className="h-screen bg-white flex flex-col">
+            <Nav activeTab={activeTab} setActiveTab={setActiveTab} />
 
-  return (
-    <div className="h-screen bg-white flex flex-col">
-      <Nav activeTab={activeTab} setActiveTab={setActiveTab} />
-
-      <div className="flex-1 overflow-y-auto p-3">
-        {activeTab === "classes" && <Classes classes={classes} />}
-        {activeTab === "settings" && <Settings />}
-      </div>
-    </div>
-  );
+            <div className="flex-1 overflow-y-auto p-3">
+                {activeTab === "classes" && <Classes classes={classes} />}
+                {activeTab === "settings" && <Settings />}
+            </div>
+        </div>
+    );
 }
 
 export default App;

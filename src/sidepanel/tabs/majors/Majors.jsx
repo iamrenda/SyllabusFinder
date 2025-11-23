@@ -1,50 +1,76 @@
 import { useState } from "react";
 import faculties from "../../../../public/faculties.json";
-import scrapeAllClasses from "../../../scripts/scrapeAllClasses";
 import FacultyElement from "./FacultyElement";
 import Button from "../../components/Button";
+import storeClasses from "../../../scripts/storeClasses";
+import requestScrapeFromPage from "../../../scripts/requestScrapeFromPage";
 
-async function submitButton(selectedMajor, setIsLoading, setClasses) {
-  setIsLoading(true);
-  await chrome.storage.local.set({ selectedMajor });
+async function storeMajor(tempMajor) {
+    try {
+        await chrome.storage.local.set({ selectedMajor: tempMajor });
 
-  const classes = await scrapeAllClasses(selectedMajor);
-  await chrome.storage.local.set({ classes });
-
-  setClasses(classes);
-
-  alert("シラバスの取得が完了しました！");
-  setIsLoading(false);
+        return tempMajor;
+    } catch (error) {
+        console.error("Error storing selected major:", error);
+        throw new Error("学科を保存できませんでした。");
+    }
 }
 
-function Majors({ setIsLoading, setClasses }) {
-  const [selectedMajor, setSelectedMajor] = useState("");
+async function submitButton(tempMajor, setIsLoading, setClasses, setSelectedMajor) {
+    setIsLoading(true);
 
-  return (
-    <div className="h-48 rounded-lg px-5 py-4">
-      <div className="mb-3">
-        <h1 className="text-2xl">Syllabus Finder</h1>
-        <p className="text-base">
-          あなたの学科: <span>{selectedMajor || "未選択"}</span>
-        </p>
-      </div>
+    try {
+        const major = await storeMajor(tempMajor);
+        setSelectedMajor(major);
 
-      <ul className="flex flex-col gap-5">
-        {faculties.map((faculty, index) => (
-          <FacultyElement
-            faculty={faculty}
-            isLast={index === faculties.length - 1}
-            selectedMajor={selectedMajor}
-            setSelectedMajor={setSelectedMajor}
-            key={index}
-          />
-        ))}
-      </ul>
-      <Button handleClick={() => submitButton(selectedMajor, setIsLoading, setClasses)} isDisabled={!selectedMajor}>
-        {selectedMajor}に決定する
-      </Button>
-    </div>
-  );
+        const classInfo = await requestScrapeFromPage();
+        if (!classInfo || Object.keys(classInfo).length === 0) {
+            throw new Error("クラス情報の取得に失敗しました。");
+        }
+        await chrome.storage.local.set({ classInfo });
+
+        await storeClasses(major, setClasses);
+
+        alert("シラバスの取得が完了しました！");
+    } catch (error) {
+        setIsLoading(false);
+        console.error("Error in submitButton:", error);
+    }
+
+    setIsLoading(false);
+}
+
+function Majors({ setIsLoading, setClasses, selectedMajor, setSelectedMajor }) {
+    const [tempMajor, setTempMajor] = useState(selectedMajor);
+
+    return (
+        <div className="h-48 rounded-lg px-5 py-4">
+            <div className="mb-3">
+                <h1 className="text-2xl">Syllabus Finder</h1>
+                <p className="text-base">
+                    あなたの学科: <span>{tempMajor || "未選択"}</span>
+                </p>
+            </div>
+
+            <ul className="flex flex-col gap-5 mb-6">
+                {faculties.map((faculty, index) => (
+                    <FacultyElement
+                        faculty={faculty}
+                        isLast={index === faculties.length - 1}
+                        selectedMajor={tempMajor}
+                        setSelectedMajor={setTempMajor}
+                        key={index}
+                    />
+                ))}
+            </ul>
+
+            {tempMajor && (
+                <Button handleClick={() => submitButton(tempMajor, setIsLoading, setClasses, setSelectedMajor)}>
+                    {tempMajor}に決定する
+                </Button>
+            )}
+        </div>
+    );
 }
 
 export default Majors;
