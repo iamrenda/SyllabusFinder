@@ -3,7 +3,7 @@
     "name": "青山学院大学シラバスファインダー",
     "version": "1.0",
     "description": "青山学院大学学生向けシラバス検索拡張機能です。",
-    "permissions": ["storage", "sidePanel", "tabs"],
+    "permissions": ["storage", "sidePanel"],
     "background": {
         "service_worker": "background.js"
     },
