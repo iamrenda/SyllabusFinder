@@ -1,9 +1,11 @@
-import { useState } from "react";
+import { useContext, useState } from "react";
 import faculties from "../../../../public/faculties.json";
 import FacultyElement from "./FacultyElement";
 import Button from "../../components/Button";
 import storeClasses from "../../../scripts/storeClasses";
 import requestScrapeFromPage from "../../../scripts/requestScrapeFromPage";
+import Syllabus from "../classes/collectedSyllabuses/Syllabus";
+import { SyllabusFinderContext } from "../../Context/SyllabusFinderContext";
 
 async function storeMajor(tempMajor) {
     try {
@@ -40,7 +42,8 @@ async function submitButton(tempMajor, setIsLoading, setClasses, setSelectedMajo
     setIsLoading(false);
 }
 
-function Majors({ setIsLoading, setClasses, selectedMajor, setSelectedMajor }) {
+function Majors() {
+    const { setIsLoading, setClasses, setSelectedMajor, selectedMajor } = useContext(SyllabusFinderContext);
     const [tempMajor, setTempMajor] = useState(selectedMajor);
 
     return (

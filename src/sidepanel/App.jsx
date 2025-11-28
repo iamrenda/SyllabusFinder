@@ -1,5 +1,5 @@
 import "../styles/index.css";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import Classes from "./tabs/classes/classes/Classes";
 import Majors from "./tabs/majors/Majors";
 import About from "./tabs/about/About";
@@ -8,6 +8,7 @@ import LoadingScreen from "./components/Loading";
 import storeClasses from "../scripts/storeClasses";
 import Error from "./components/Error";
 import requestScrapeFromPage from "../scripts/requestScrapeFromPage";
+import { SyllabusFinderContext } from "./Context/SyllabusFinderContext";
 
 async function reload(selectedMajor, setClasses, setIsLoading) {
     setIsLoading(true);
@@ -43,10 +44,9 @@ async function reload(selectedMajor, setClasses, setIsLoading) {
 }
 
 function App() {
-    const [isLoading, setIsLoading] = useState(false);
+    const { isLoading, setIsLoading, classes, setClasses, selectedMajor, setSelectedMajor } =
+        useContext(SyllabusFinderContext);
     const [activeTab, setActiveTab] = useState("classes");
-    const [classes, setClasses] = useState({});
-    const [selectedMajor, setSelectedMajor] = useState("");
 
     useEffect(() => {
         async function loadClasses() {
@@ -55,7 +55,7 @@ function App() {
         }
 
         loadClasses();
-    }, []);
+    }, [setClasses]);
 
     useEffect(() => {
         async function loadMajor() {
@@ -64,21 +64,14 @@ function App() {
         }
 
         loadMajor();
-    }, []);
+    }, [setSelectedMajor]);
 
     if (isLoading) {
         return <LoadingScreen />;
     }
 
     if (!selectedMajor) {
-        return (
-            <Majors
-                setIsLoading={setIsLoading}
-                setClasses={setClasses}
-                selectedMajor={selectedMajor}
-                setSelectedMajor={setSelectedMajor}
-            />
-        );
+        return <Majors />;
     }
 
     if (!classes || Object.keys(classes).length === 0) {

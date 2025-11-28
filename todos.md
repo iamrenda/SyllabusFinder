@@ -1,9 +1,9 @@
 features that i want to add in the future
 
 \***\*\*\*\*\*\*** Neccessary \***\*\*\*\*\*\***
+prob fix the prop drillings by context api (fixing right now)
 
 \***\*\*\*\*\*\*** Maybes \***\*\*\*\*\*\***
-prob fix the prop drillings
 
 Sorting the classes by normal / based on today's day
 
