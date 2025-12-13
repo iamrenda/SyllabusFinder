@@ -6,7 +6,7 @@ function About() {
                 シラバスファインダーは、青山学院大学学生のためだけに作られた Chrome 拡張機能です。ぜひご活用ください。
             </p>
             <p className="mb-2">
-                バグ、要望等がありましたら、以下のGithubリポジトリにてIssueを立てていただけると幸いです。
+                バグ、要望等がありましたら、以下のGithubリポジトリにてIssueを立てていただけるか、Gmailにてご連絡ください。
             </p>
             <p className="mb-2">
                 Github:
@@ -14,9 +14,15 @@ function About() {
                     https://github.com/iamrenda/SyllabusFinder
                 </a>
             </p>
-            <p className="mb-2">開発者：青山学院大学 情報テクノロジー学科 １年 渡部 廉</p>
+            <p className="mb-2">
+                Gmail:
+                <a href="mailto:iamrenda.dev@gmail.com" className="text-blue-500 underline">
+                    iamrenda.dev@gmail.com
+                </a>
+            </p>
+            <p className="mb-2">開発者: iamrenda</p>
             <footer className="text-xs text-gray-500 mt-6">
-                © 2025 渡部 廉.
+                © {new Date().getFullYear()} iamrenda.
                 無断転載を禁じます。本拡張機能は個人によって製作されたものであり，青山学院大学の公式の機能ではありません．
                 本拡張機能の利用によって，利用者及び第三者に生じた損害においては，責任を負わないものとします．
             </footer>

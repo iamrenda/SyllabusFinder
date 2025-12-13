@@ -2,6 +2,15 @@ import { FaRegTrashCan, FaRegUser } from "react-icons/fa6";
 import { useContext } from "react";
 import { SyllabusFinderContext } from "../../Context/SyllabusFinderContext";
 
+function handleDataReset() {
+    if (window.confirm("本当にこの拡張機能に保存されたデータを初期化しますか？")) {
+        chrome.storage.local.clear().then(() => {
+            alert("データが初期化されました。拡張機能を再設定してください。");
+            window.location.reload();
+        });
+    }
+}
+
 function Settings() {
     const { selectedMajor } = useContext(SyllabusFinderContext);
 
@@ -21,7 +30,11 @@ function Settings() {
                             
                             もし新しい学期が始まり、クラスが変わりましたら下のボタンをクリックしてやり直してください。`}
                 </p>
-                <a href="" className="text-red-700 font-bold hover:underline grid col-start-2 text-base">
+                <a
+                    href=""
+                    onClick={handleDataReset}
+                    className="text-red-700 font-bold hover:underline grid col-start-2 text-sm"
+                >
                     データを初期化する
                 </a>
             </li>
